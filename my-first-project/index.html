@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mr. Podshiboss — Запчасти для маникюрных аппаратов</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --a1: #38bdf8;
+      --a2: #0ea5e9;
+      --a3: #7dd3fc;
+      --g1: rgba(56,189,248,.5);
+      --g2: rgba(14,165,233,.32);
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #040e1f;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── Particle canvas ── */
+    #bg { position: fixed; inset: 0; z-index: 0; }
+
+    /* ── Noise grain ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E");
+      background-size: 180px;
+      opacity: .45;
+    }
+
+    /* ── Page ── */
+    .page {
+      position: relative; z-index: 2;
+      min-height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 28px 16px;
+    }
+
+    /* ── Card ── */
+    .card {
+      width: min(460px, 100%);
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(56,189,248,.15);
+      border-radius: 26px;
+      padding: 46px 38px 42px;
+      backdrop-filter: blur(36px) saturate(1.3);
+      -webkit-backdrop-filter: blur(36px) saturate(1.3);
+      box-shadow:
+        0 0 0 1px rgba(56,189,248,.08) inset,
+        0 32px 80px rgba(0,0,0,.7),
+        0 0 70px var(--g1),
+        0 0 140px var(--g2);
+      animation: rise .8s cubic-bezier(.22,1,.36,1) both;
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(38px) scale(.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ── Gear logo ── */
+    .logo-wrap {
+      display: flex; flex-direction: column; align-items: center; gap: 0;
+      margin-bottom: 28px;
+    }
+
+    .gear-ring {
+      width: 92px; height: 92px; border-radius: 50%;
+      background: rgba(56,189,248,.06);
+      border: 1.5px solid rgba(56,189,248,.2);
+      box-shadow:
+        0 0 0 6px rgba(56,189,248,.08),
+        0 8px 32px rgba(14,165,233,.3);
+      display: flex; align-items: center; justify-content: center;
+      animation: ringPulse 3s ease-in-out infinite;
+    }
+    @keyframes ringPulse {
+      0%,100% { box-shadow: 0 0 0 6px rgba(56,189,248,.08), 0 8px 32px rgba(14,165,233,.3); }
+      50%      { box-shadow: 0 0 0 11px rgba(56,189,248,.13), 0 12px 42px rgba(14,165,233,.42); }
+    }
+
+    .gear-anim { animation: gearSpin 18s linear infinite; transform-origin: 50px 50px; }
+    @keyframes gearSpin { to { transform: rotate(360deg); } }
+
+
+    /* ── Main name heading ── */
+    .name {
+      text-align: center;
+      font-size: clamp(26px, 7vw, 38px);
+      font-weight: 800;
+      letter-spacing: -.5px;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #7dd3fc, #38bdf8, #0ea5e9, #bae6fd, #0284c7);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: nameGrad 4s ease infinite;
+      filter: drop-shadow(0 0 22px rgba(56,189,248,.6));
+    }
+    @keyframes nameGrad {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* ── Divider ── */
+    .divider {
+      margin: 14px auto 18px;
+      width: 52px; height: 2px; border-radius: 2px;
+      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+      box-shadow: 0 0 12px rgba(56,189,248,.7);
+    }
+
+    /* ── Specialization ── */
+    .spec-text {
+      text-align: center;
+      font-size: 14.5px; color: rgba(180,210,255,.55);
+      line-height: 1.55;
+      margin-bottom: 32px;
+    }
+
+    /* ── Marketplace links ── */
+    .links { display: flex; flex-direction: column; gap: 11px; }
+
+    .link-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 13px 16px;
+      border-radius: 15px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      text-decoration: none;
+      color: rgba(255,255,255,.88);
+      transition: all .24s cubic-bezier(.22,1,.36,1);
+      position: relative; overflow: hidden;
+    }
+    .link-item::before {
+      content: '';
+      position: absolute; inset: 0;
+      opacity: 0; transition: opacity .24s;
+    }
+    .link-item.ozon::before { background: linear-gradient(135deg, rgba(0,91,255,.18), rgba(0,91,255,.04)); }
+    .link-item.wb::before   { background: linear-gradient(135deg, rgba(203,17,171,.18), rgba(203,17,171,.04)); }
+
+    .link-item:hover { transform: translateX(5px); }
+    .link-item.ozon:hover { border-color: rgba(0,91,255,.5);     box-shadow: 0 4px 24px rgba(0,91,255,.22); }
+    .link-item.wb:hover   { border-color: rgba(203,17,171,.45); box-shadow: 0 4px 24px rgba(203,17,171,.2); }
+    .link-item:hover::before { opacity: 1; }
+
+    .link-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; position: relative; z-index: 1;
+    }
+    .link-icon.ozon { background: #005bff; }
+    .link-icon.wb   { background: #cb11ab; }
+
+    .link-body {
+      display: flex; flex-direction: column; gap: 2px;
+      flex: 1; position: relative; z-index: 1;
+    }
+    .link-label { font-size: 11px; color: rgba(255,255,255,.38); font-weight: 500; }
+    .link-value { font-size: 14px; font-weight: 700; }
+    .link-value.ozon-c { color: #5c9fff; }
+    .link-value.wb-c   { color: #e050c8; }
+
+    .link-arrow {
+      color: rgba(255,255,255,.2); flex-shrink: 0;
+      position: relative; z-index: 1;
+      transition: color .2s, transform .2s;
+    }
+    .link-item:hover .link-arrow { color: rgba(255,255,255,.55); transform: translateX(3px); }
+
+    /* ── Footer ── */
+    .footer {
+      margin-top: 32px; text-align: center;
+      font-size: 11px; color: rgba(255,255,255,.18); letter-spacing: .08em;
+    }
+
+    @media (max-width: 380px) {
+      .card { padding: 34px 22px 34px; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+
+<div class="page">
+  <div class="card">
+
+    <!-- Gear icon -->
+    <div class="logo-wrap">
+      <div class="gear-ring">
+        <svg id="gear-svg" width="58" height="58" viewBox="0 0 100 100"
+             xmlns="http://www.w3.org/2000/svg" fill="none"></svg>
+      </div>
+    </div>
+
+    <!-- Gradient name -->
+    <h1 class="name">Mr. Podshiboss</h1>
+    <div class="divider"></div>
+
+    <!-- Spec -->
+    <p class="spec-text">Запчасти для маникюрных аппаратов</p>
+
+    <!-- Links -->
+    <div class="links">
+
+      <!-- Ozon — real logo -->
+      <a class="link-item ozon" href="https://ozon.ru/s/mr-podshiboss" target="_blank" rel="noopener">
+        <div class="link-icon ozon">
+          <svg width="40" height="16" viewBox="0 0 40 16" xmlns="http://www.w3.org/2000/svg">
+            <text x="20" y="13" text-anchor="middle"
+              font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif"
+              font-size="14" font-weight="800" fill="white" letter-spacing="1">ozon</text>
+          </svg>
+        </div>
+        <div class="link-body">
+          <span class="link-label">Маркетплейс</span>
+          <span class="link-value ozon-c">Ozon</span>
+        </div>
+        <svg class="link-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+
+      <!-- Wildberries — real logo -->
+      <a class="link-item wb" href="https://www.wildberries.ru/seller/4428915" target="_blank" rel="noopener">
+        <div class="link-icon wb">
+          <!-- WB monogram: accurate letter shapes -->
+          <svg width="30" height="20" viewBox="0 0 76 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- W -->
+            <polyline points="2,4 13,44 22,20 31,44 42,4"
+              stroke="white" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <!-- B -->
+            <path d="M51 4 L51 44" stroke="white" stroke-width="5.5" stroke-linecap="round"/>
+            <path d="M51 4 Q68 4 68 14 Q68 24 51 24" stroke="white" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <path d="M51 24 Q70 24 70 34 Q70 44 51 44" stroke="white" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="link-body">
+          <span class="link-label">Маркетплейс</span>
+          <span class="link-value wb-c">Wildberries</span>
+        </div>
+        <svg class="link-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+
+    </div>
+
+    <p class="footer">© 2026 · Mr. Podshiboss</p>
+  </div>
+</div>
+
+<script>
+/* ── Gear SVG (generated) ── */
+(function () {
+  const svg = document.getElementById('gear-svg');
+  const NS  = 'http://www.w3.org/2000/svg';
+  const cx = 50, cy = 50;
+  const GEAR_COLOR = 'rgba(255,255,255,0.92)';
+
+  function gearPath(N, Ro, Ri, tipFrac) {
+    const pts  = [];
+    const step = (2 * Math.PI) / N;
+    const halfTip    = step * tipFrac / 2;
+    const halfValley = step * (1 - tipFrac) / 2;
+    for (let i = 0; i < N; i++) {
+      const a  = i * step - Math.PI / 2;
+      const pt = (ang, r) => [cx + r * Math.cos(ang), cy + r * Math.sin(ang)];
+      pts.push(pt(a - step / 2 + halfValley, Ri));
+      pts.push(pt(a - halfTip,               Ro));
+      pts.push(pt(a + halfTip,               Ro));
+      pts.push(pt(a + step / 2 - halfValley, Ri));
+    }
+    return 'M ' + pts.map(p => p[0].toFixed(2) + ',' + p[1].toFixed(2)).join(' L ') + ' Z';
+  }
+
+  /* Helper: SVG circle path string (for evenodd compound paths) */
+  function circlePath(x, y, r) {
+    return `M ${x+r},${y} A ${r},${r} 0 1,0 ${x-r},${y} A ${r},${r} 0 1,0 ${x+r},${y} Z`;
+  }
+
+  const g = document.createElementNS(NS, 'g');
+  g.classList.add('gear-anim');
+
+  /* Layer 1: gear teeth body — uses evenodd so inner circle is transparent */
+  const gearBody = document.createElementNS(NS, 'path');
+  gearBody.setAttribute('d', gearPath(12, 46, 36, 0.50) + ' ' + circlePath(cx, cy, 22));
+  gearBody.setAttribute('fill', GEAR_COLOR);
+  gearBody.setAttribute('fill-rule', 'evenodd');
+  g.appendChild(gearBody);
+
+  /* Layer 2: hub ring — solid ring with transparent center */
+  const hubRing = document.createElementNS(NS, 'path');
+  hubRing.setAttribute('d', circlePath(cx, cy, 16) + ' ' + circlePath(cx, cy, 9));
+  hubRing.setAttribute('fill', GEAR_COLOR);
+  hubRing.setAttribute('fill-rule', 'evenodd');
+  g.appendChild(hubRing);
+
+  /* Layer 3: center dot */
+  const dot = document.createElementNS(NS, 'circle');
+  dot.setAttribute('cx', cx); dot.setAttribute('cy', cy); dot.setAttribute('r', 3.5);
+  dot.setAttribute('fill', GEAR_COLOR);
+  g.appendChild(dot);
+
+  svg.appendChild(g);
+})();
+
+/* ── Particle background ── */
+(function () {
+  const canvas = document.getElementById('bg');
+  const ctx    = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  const COLORS = ['#38bdf8','#0ea5e9','#7dd3fc','#0284c7','#bae6fd'];
+  const COUNT  = window.innerWidth < 600 ? 38 : 65;
+
+  function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+
+  function rand(a, b) { return a + Math.random() * (b - a); }
+
+  function Particle() {
+    this.reset = function () {
+      this.x = rand(0, W); this.y = rand(0, H);
+      this.r = rand(.7, 2.2);
+      this.vx = rand(-.22, .22); this.vy = rand(-.38, -.08);
+      this.life = 0; this.maxLife = rand(110, 260);
+      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+    };
+    this.reset();
+    this.life = Math.random() * this.maxLife;
+  }
+
+  function init() { particles = []; for (let i = 0; i < COUNT; i++) particles.push(new Particle()); }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    /* Ambient glows */
+    [[ W*.28, H*.38, W*.42, 'rgba(14,165,233,.08)' ],
+     [ W*.73, H*.62, W*.36, 'rgba(56,189,248,.06)' ]].forEach(([x,y,r,c]) => {
+      const g = ctx.createRadialGradient(x,y,0,x,y,r);
+      g.addColorStop(0, c); g.addColorStop(1, 'transparent');
+      ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+    });
+
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.life++;
+      const t = p.life / p.maxLife;
+      const a = t < .15 ? t/.15 : t > .8 ? (1-t)/.2 : 1;
+      ctx.globalAlpha = a * .65;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = p.color; ctx.fill();
+      if (p.life >= p.maxLife) p.reset();
+    });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', () => { resize(); init(); });
+  resize(); init(); draw();
+})();
+</script>
+</body>
+</html>
