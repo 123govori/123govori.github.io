@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Как начать вайбкодить</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0d0d0d;
+      --card: #161616;
+      --border: #2a2a2a;
+      --accent: #a78bfa;
+      --accent2: #f472b6;
+      --accent3: #34d399;
+      --text: #e5e5e5;
+      --muted: #888;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.7;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 80px 8% 80px 10%;
+      position: relative;
+      overflow: hidden;
+      background: #0d0d0d;
+    }
+
+    .hero-bg {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+      width: 58%;
+      object-fit: cover;
+      object-position: center top;
+      opacity: 0.55;
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 25%, black 55%);
+      mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 25%, black 55%);
+      pointer-events: none;
+    }
+
+    .hero-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+    }
+    .hero-orb-1 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(167,139,250,0.18) 0%, transparent 70%);
+      top: -100px; left: -100px;
+      animation: orb-drift 12s ease-in-out infinite;
+    }
+    .hero-orb-2 {
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(244,114,182,0.12) 0%, transparent 70%);
+      bottom: 0; left: 30%;
+      animation: orb-drift 16s ease-in-out infinite reverse;
+    }
+
+    @keyframes orb-drift {
+      0%, 100% { transform: translate(0, 0); }
+      33% { transform: translate(30px, -20px); }
+      66% { transform: translate(-20px, 30px); }
+    }
+
+    .hero-text {
+      position: relative;
+      z-index: 2;
+      max-width: 540px;
+      text-align: left;
+    }
+
+    @media (max-width: 860px) {
+      .hero { padding: 100px 24px 80px; justify-content: center; }
+      .hero-text { text-align: center; max-width: 100%; }
+      .hero-bg { width: 100%; opacity: 0.18;
+        -webkit-mask-image: none; mask-image: none; }
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(167, 139, 250, 0.12);
+      border: 1px solid rgba(167, 139, 250, 0.3);
+      color: var(--accent);
+      font-size: 13px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      margin-bottom: 28px;
+      letter-spacing: 0.04em;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 7vw, 5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 560px;
+      margin-bottom: 40px;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 14px 32px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .hero-cta:hover { opacity: 0.85; }
+
+    /* WHAT IS */
+    .section {
+      padding: 100px 20px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .section h2 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 700;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .section p {
+      color: #aaa;
+      font-size: 1.05rem;
+      margin-bottom: 16px;
+    }
+
+    .quote {
+      border-left: 3px solid var(--accent);
+      padding: 16px 24px;
+      background: rgba(167, 139, 250, 0.06);
+      border-radius: 0 12px 12px 0;
+      margin: 32px 0;
+      font-style: italic;
+      color: #ccc;
+      font-size: 1.05rem;
+    }
+
+    .quote cite {
+      display: block;
+      margin-top: 8px;
+      font-style: normal;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* TOOLS GRID */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 40px;
+    }
+
+    .tool-card {
+      background: rgba(22, 22, 30, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(167,139,250,0.1);
+      border-radius: 16px;
+      padding: 24px;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+    }
+
+    .tool-card:hover {
+      border-color: rgba(167,139,250,0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 0 30px rgba(167,139,250,0.1);
+    }
+
+    .tool-icon {
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+
+    .tool-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .tool-card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+
+    .tag-free { background: rgba(52, 211, 153, 0.12); color: var(--accent3); }
+    .tag-paid { background: rgba(244, 114, 182, 0.12); color: var(--accent2); }
+    .tag-freemium { background: rgba(167, 139, 250, 0.12); color: var(--accent); }
+
+    /* STEPS */
+    .steps {
+      margin-top: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .step {
+      display: flex;
+      gap: 24px;
+      position: relative;
+    }
+
+    .step-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .step-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1rem;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .step-line {
+      width: 2px;
+      flex: 1;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      min-height: 40px;
+      margin: 4px 0;
+    }
+
+    .step:last-child .step-line { display: none; }
+
+    .step-body {
+      padding-bottom: 40px;
+      padding-top: 8px;
+    }
+
+    .step-body h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .step-body p {
+      color: #aaa;
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    .step-body .example {
+      margin-top: 12px;
+      background: #111;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: #ccc;
+      white-space: pre-wrap;
+    }
+
+    .example-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+      font-family: inherit;
+    }
+
+    /* TIPS */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 40px;
+    }
+
+    .tip-card {
+      background: rgba(22, 22, 30, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(167,139,250,0.1);
+      border-radius: 16px;
+      padding: 22px;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .tip-card:hover {
+      border-color: rgba(167,139,250,0.35);
+      box-shadow: 0 0 24px rgba(167,139,250,0.08);
+    }
+
+    .tip-card .emoji {
+      font-size: 1.6rem;
+      margin-bottom: 10px;
+    }
+
+    .tip-card h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .tip-card p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    /* MISTAKES */
+    .mistake-list {
+      margin-top: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .mistake-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      background: rgba(22, 22, 30, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(244,114,182,0.08);
+      border-radius: 12px;
+      padding: 18px 20px;
+      transition: border-color 0.2s;
+    }
+
+    .mistake-item:hover {
+      border-color: rgba(244,114,182,0.25);
+    }
+
+    .mistake-icon {
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .mistake-item strong {
+      display: block;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+
+    .mistake-item p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    /* DIVIDER */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border), transparent);
+      margin: 0 auto;
+      max-width: 860px;
+    }
+
+    /* CTA FOOTER */
+    .cta-footer {
+      text-align: center;
+      padding: 100px 20px;
+      background: radial-gradient(ellipse at 50% 100%, #1a0a2e 0%, #0d0d0d 70%);
+    }
+
+    .cta-footer h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .cta-footer p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin-bottom: 36px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      font-weight: 600;
+      padding: 13px 28px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: opacity 0.2s;
+    }
+
+    .btn-secondary {
+      background: var(--card);
+      color: var(--text);
+      font-weight: 600;
+      padding: 13px 28px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      border: 1px solid var(--border);
+      transition: border-color 0.2s;
+    }
+
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-secondary:hover { border-color: var(--accent); }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.8rem;
+      color: #444;
+    }
+
+    /* PAID SECTION */
+    .paid-section {
+      padding: 80px 20px;
+      background: linear-gradient(135deg, #1a0a2e 0%, #0d1a1a 100%);
+      border-top: 1px solid var(--border);
+    }
+
+    .paid-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .paid-badge {
+      display: inline-block;
+      background: rgba(52, 211, 153, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      color: var(--accent3);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 24px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .paid-section h2 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .paid-section p {
+      color: #aaa;
+      font-size: 1rem;
+      margin-bottom: 28px;
+    }
+
+    .paid-list {
+      list-style: none;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 36px;
+      text-align: left;
+    }
+
+    .paid-list li {
+      font-size: 0.95rem;
+      color: var(--text);
+      padding-left: 24px;
+      position: relative;
+    }
+
+    .paid-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--accent3);
+      font-weight: 700;
+    }
+
+    .paid-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent3), #059669);
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 700;
+      padding: 16px 36px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .paid-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+    @media (max-width: 600px) {
+      .step-body .example { font-size: 0.78rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <img src="hero.jpg" alt="" class="hero-bg" />
+    <div class="hero-text">
+      <div class="badge">Гайд для начинающих · 2025</div>
+      <h1>Как начать<br/><span>вайбкодить</span></h1>
+      <p>Создавай сайты, приложения и боты — даже если никогда не писал ни строчки кода. Всё, что нужно — идея и правильный запрос.</p>
+      <a href="#start" class="hero-cta">Начать читать</a>
+    </div>
+  </section>
+
+  <!-- ЧТО ТАКОЕ ВАЙБКОДИНГ -->
+  <section class="section" id="start">
+    <div class="section-label">01 — Что это вообще</div>
+    <h2>Вайбкодинг — это не магия.<br/>Это новый навык.</h2>
+    <p>Вайбкодинг (vibe coding) — подход, при котором ты описываешь AI что хочешь получить, а он пишет код за тебя. Ты работаешь на уровне идей и задач, не на уровне синтаксиса и функций.</p>
+
+    <p>Это не значит, что думать не надо. Наоборот — теперь важно уметь <strong>правильно объяснять</strong> задачу, давать контекст, проверять результат и улучшать шаг за шагом.</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ИНСТРУМЕНТЫ -->
+  <section class="section">
+    <div class="section-label">02 — Инструменты</div>
+    <h2>Что тебе понадобится</h2>
+    <p>Для старта не нужно ничего устанавливать — всё работает в браузере.</p>
+
+    <div class="tools-grid">
+      <div class="tool-card">
+        <div class="tool-icon">✦</div>
+        <h3>Claude (Anthropic)</h3>
+        <p>Отлично понимает задачи, пишет чистый код и объясняет что сделал. Хорош для сайтов и логики.</p>
+        <span class="tag tag-freemium">Freemium</span>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">⚡</div>
+        <h3>Cursor</h3>
+        <p>Редактор кода с AI внутри. Открываешь файлы, просишь изменить — он меняет прямо в редакторе.</p>
+        <span class="tag tag-freemium">Freemium</span>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">🌊</div>
+        <h3>Bolt.new</h3>
+        <p>Описываешь приложение — получаешь рабочий проект прямо в браузере. Можно деплоить в один клик.</p>
+        <span class="tag tag-freemium">Freemium</span>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">🔮</div>
+        <h3>v0 (Vercel)</h3>
+        <p>Создаёт красивые UI-компоненты по описанию. Идеален для лендингов и интерфейсов.</p>
+        <span class="tag tag-freemium">Freemium</span>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">🤖</div>
+        <h3>ChatGPT</h3>
+        <p>Хорошо объясняет, помогает с идеями, пишет код и отвечает на вопросы по нему.</p>
+        <span class="tag tag-freemium">Freemium</span>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">🐙</div>
+        <h3>GitHub Pages</h3>
+        <p>Бесплатный хостинг для статичных сайтов. Загружаешь HTML-файлы — сайт в интернете.</p>
+        <span class="tag tag-free">Бесплатно</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ШАГИ -->
+  <section class="section">
+    <div class="section-label">03 — Пошагово</div>
+    <h2>Твой первый проект за 1 час</h2>
+    <p>Конкретный путь от нуля до работающего сайта в интернете.</p>
+
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">1</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <h3>Придумай что хочешь сделать</h3>
+          <p>Начни с чего-то простого и конкретного. Не «крутое приложение», а «лендинг для моей мамы-парикмахера» или «страница с моим портфолио».</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">2</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <h3>Открой Claude или ChatGPT</h3>
+          <p>Зайди на claude.ai или chatgpt.com. Аккаунт бесплатный. Опиши свою задачу максимально подробно — как будто объясняешь дизайнеру.</p>
+          <div class="example">
+<div class="example-label">Пример хорошего запроса</div>Сделай одностраничный сайт для мастера по маникюру.
+Имя: Оля. Услуги: маникюр 1500₽, педикюр 2000₽.
+Тёмная тема, розовые акценты. Кнопка «Записаться»
+должна открывать WhatsApp. Телефон: +7 999 123 45 67.
+Сделай всё в одном HTML-файле с CSS внутри.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">3</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <h3>Скопируй код и открой в браузере</h3>
+          <p>Скопируй HTML-код, вставь в файл <code style="color: var(--accent); background: rgba(167,139,250,0.1); padding: 2px 6px; border-radius: 4px;">index.html</code> (через Блокнот или TextEdit) и открой двойным кликом. Сайт уже работает у тебя локально.</p>
+          <p style="color: var(--muted); font-size: 0.9rem; margin-top: 10px;">Либо это за тебя сделает твой ИИ-ассистент — он создаст файл прямо в нужной папке.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">4</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <h3>Правь через запросы</h3>
+          <p>Что-то не нравится? Не лезь в код руками. Напиши AI что именно изменить.</p>
+          <div class="example">
+<div class="example-label">Примеры правок</div>Сделай кнопку крупнее и добавь тень
+Поменяй шрифт на что-то современное
+Добавь блок с отзывами (придумай 3 штуки)
+Сделай чтобы на мобильном было удобно</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">5</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <h3>Залей на GitHub Pages</h3>
+          <p>Зарегистрируйся на github.com, создай репозиторий, загрузи файл. В настройках включи GitHub Pages — и у тебя будет бесплатный сайт по адресу <code style="color: var(--accent); background: rgba(167,139,250,0.1); padding: 2px 6px; border-radius: 4px;">имя.github.io/проект</code>.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- СОВЕТЫ -->
+  <section class="section">
+    <div class="section-label">04 — Советы</div>
+    <h2>Как писать запросы, которые работают</h2>
+    <p>Качество результата напрямую зависит от того, насколько точно ты объясняешь задачу.</p>
+
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="emoji">🎯</div>
+        <h3>Будь конкретным</h3>
+        <p>«Сделай красиво» — плохо. «Тёмный фон #0d0d0d, белый текст, фиолетовые акценты» — хорошо.</p>
+      </div>
+      <div class="tip-card">
+        <div class="emoji">📋</div>
+        <h3>Давай контекст</h3>
+        <p>Кто это для? Зачем? Какой стиль? Чем больше контекста — тем точнее результат.</p>
+      </div>
+      <div class="tip-card">
+        <div class="emoji">🔁</div>
+        <h3>Не бойся улучшать шаг за шагом</h3>
+        <p>Первый результат редко идеален. Правь, уточняй, проси переделать — это нормальный процесс.</p>
+      </div>
+      <div class="tip-card">
+        <div class="emoji">✂️</div>
+        <h3>Дели на части</h3>
+        <p>Большую задачу лучше разбить: сначала структура, потом дизайн, потом мобильная версия.</p>
+      </div>
+      <div class="tip-card">
+        <div class="emoji">💬</div>
+        <h3>Спрашивай «почему»</h3>
+        <p>Если что-то непонятно — попроси объяснить простыми словами. AI отлично обучает.</p>
+      </div>
+      <div class="tip-card">
+        <div class="emoji">📸</div>
+        <h3>Покажи пример</h3>
+        <p>«Хочу как на apple.com — строго, минималистично, с большими заголовками» работает отлично.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ОШИБКИ -->
+  <section class="section">
+    <div class="section-label">05 — Частые ошибки</div>
+    <h2>Что мешает новичкам</h2>
+
+    <div class="mistake-list">
+      <div class="mistake-item">
+        <div class="mistake-icon">🚫</div>
+        <div>
+          <strong>Слишком глобальный первый проект</strong>
+          <p>«Хочу сделать TikTok, но лучше» — это не для первого запроса. Начни с одной страницы, одной функции.</p>
+        </div>
+      </div>
+      <div class="mistake-item">
+        <div class="mistake-icon">🚫</div>
+        <div>
+          <strong>Ждать идеального результата с первого раза</strong>
+          <p>Вайбкодинг — это диалог. Первый ответ — это черновик, а не финальный продукт.</p>
+        </div>
+      </div>
+      <div class="mistake-item">
+        <div class="mistake-icon">🚫</div>
+        <div>
+          <strong>Копировать код, не понимая что происходит</strong>
+          <p>Попроси AI объяснить ключевые части. Это занимает 2 минуты и даёт огромный контроль над результатом.</p>
+        </div>
+      </div>
+      <div class="mistake-item">
+        <div class="mistake-icon">🚫</div>
+        <div>
+          <strong>Бросать при первой ошибке</strong>
+          <p>Что-то сломалось? Скопируй текст ошибки и отправь AI — он почти всегда знает как починить.</p>
+        </div>
+      </div>
+      <div class="mistake-item">
+        <div class="mistake-icon">🚫</div>
+        <div>
+          <strong>Не проверять результат</strong>
+          <p>AI может ошибаться. Всегда проверяй что получилось глазами и тестируй в браузере.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-footer">
+    <h2>Готов начать?</h2>
+    <p>Открой Claude или ChatGPT прямо сейчас и опиши свою первую идею. Самый плохой первый проект лучше, чем идеальный несделанный.</p>
+    <div class="cta-buttons">
+      <a href="https://claude.ai" target="_blank" class="btn-primary">Открыть Claude</a>
+      <a href="https://bolt.new" target="_blank" class="btn-secondary">Попробовать Bolt</a>
+    </div>
+  </section>
+
+  <!-- ПЛАТНЫЙ ПРОДУКТ -->
+  <section class="paid-section">
+    <div class="paid-inner">
+      <div class="paid-badge">Следующий шаг</div>
+      <h2>Как сделать ИИ‑ассистента,<br/>который сделает всё за вас</h2>
+      <p>Подключи Claude прямо к своему редактору — и он будет писать, исправлять и запускать код прямо у тебя на компьютере. Никаких копипастов, никакого ручного труда.</p>
+      <ul class="paid-list">
+        <li>Скачать и настроить VS Code за 10 минут</li>
+        <li>Подключить Claude к редактору</li>
+        <li>Создавать целые проекты одним запросом</li>
+        <li>Работать с файлами, папками и терминалом через AI</li>
+      </ul>
+      <a href="assistant.html" class="paid-btn">Получить гайд — 990 ₽</a>
+    </div>
+  </section>
+
+  <footer>
+    Гайд сделан с помощью Claude · 2025
+  </footer>
+
+</body>
+</html>

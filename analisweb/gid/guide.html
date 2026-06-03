@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ИИ-ассистент в VS Code — полный гайд</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0d0d0d;
+      --card: rgba(22, 22, 30, 0.75);
+      --border: rgba(52, 211, 153, 0.12);
+      --border-dim: #2a2a2a;
+      --accent: #34d399;
+      --accent2: #a78bfa;
+      --accent3: #f472b6;
+      --text: #e5e5e5;
+      --muted: #888;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.75;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 80px 10% 80px 8%;
+      position: relative;
+      overflow: hidden;
+      background: #0d0d0d;
+    }
+
+    .hero-bg {
+      position: absolute;
+      left: 0; top: 0;
+      height: 100%; width: 55%;
+      object-fit: cover;
+      object-position: center top;
+      opacity: 0.45;
+      -webkit-mask-image: linear-gradient(to left, transparent 0%, rgba(0,0,0,0.4) 30%, black 60%);
+      mask-image: linear-gradient(to left, transparent 0%, rgba(0,0,0,0.4) 30%, black 60%);
+      pointer-events: none;
+    }
+
+    .hero-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+    }
+    .hero-orb-1 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(52,211,153,0.14) 0%, transparent 70%);
+      top: -80px; right: -60px;
+      animation: orb-drift 14s ease-in-out infinite;
+    }
+    .hero-orb-2 {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(167,139,250,0.1) 0%, transparent 70%);
+      bottom: -40px; right: 35%;
+      animation: orb-drift 18s ease-in-out infinite reverse;
+    }
+
+    @keyframes orb-drift {
+      0%, 100% { transform: translate(0, 0); }
+      33% { transform: translate(-25px, -15px); }
+      66% { transform: translate(15px, 25px); }
+    }
+
+    .hero-text {
+      position: relative;
+      z-index: 2;
+      max-width: 500px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(52,211,153,0.1);
+      border: 1px solid rgba(52,211,153,0.3);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 24px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin-bottom: 0;
+    }
+
+    /* NAV BAR */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,13,13,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-dim);
+      padding: 14px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .topbar-logo {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .topbar-progress {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .progress-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--border-dim);
+      transition: background 0.3s;
+    }
+
+    .progress-dot.done { background: var(--accent); box-shadow: 0 0 8px rgba(52,211,153,0.5); }
+
+    /* CONTENT */
+    .content {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    /* CHAPTER */
+    .chapter {
+      margin-bottom: 80px;
+    }
+
+    .chapter-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .chapter-label::before {
+      content: '';
+      display: block;
+      width: 24px; height: 1px;
+      background: var(--accent);
+    }
+
+    .chapter h2 {
+      font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+
+    .chapter > p {
+      color: #aaa;
+      font-size: 1rem;
+      margin-bottom: 14px;
+    }
+
+    /* STEP CARDS */
+    .step-card {
+      background: var(--card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px 32px;
+      margin-top: 20px;
+      position: relative;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .step-card:hover {
+      border-color: rgba(52,211,153,0.3);
+      box-shadow: 0 0 32px rgba(52,211,153,0.07);
+    }
+
+    .step-num-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: #000;
+      margin-bottom: 14px;
+    }
+
+    .step-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .step-card p {
+      color: #aaa;
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+    }
+
+    .step-card p:last-child { margin-bottom: 0; }
+
+    /* DOWNLOAD BUTTON */
+    .dl-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--accent), #059669);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 10px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      margin-top: 14px;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .dl-btn:hover { opacity: 0.88; transform: translateY(-2px); }
+
+    /* CODE BLOCK */
+    .code-block {
+      background: #0a0a0f;
+      border: 1px solid #1e1e2e;
+      border-radius: 12px;
+      padding: 18px 20px;
+      font-family: 'Courier New', 'Consolas', monospace;
+      font-size: 0.88rem;
+      color: #cdd6f4;
+      margin-top: 14px;
+      overflow-x: auto;
+      position: relative;
+    }
+
+    .code-block .comment { color: #6c7086; }
+    .code-block .keyword { color: var(--accent); }
+    .code-block .string { color: #a6e3a1; }
+
+    .code-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 10px;
+      font-family: inherit;
+    }
+
+    /* TIP BOX */
+    .tip-box {
+      display: flex;
+      gap: 14px;
+      background: rgba(167,139,250,0.06);
+      border: 1px solid rgba(167,139,250,0.2);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-top: 16px;
+    }
+
+    .tip-box .tip-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+
+    .tip-box p {
+      font-size: 0.9rem;
+      color: #bbb;
+      margin: 0;
+    }
+
+    .tip-box strong { color: var(--accent2); }
+
+    /* WARNING BOX */
+    .warn-box {
+      display: flex;
+      gap: 14px;
+      background: rgba(244,114,182,0.05);
+      border: 1px solid rgba(244,114,182,0.2);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-top: 16px;
+    }
+
+    .warn-box p { font-size: 0.9rem; color: #bbb; margin: 0; }
+    .warn-box strong { color: var(--accent3); }
+
+    /* PROMPT EXAMPLE */
+    .prompt-example {
+      background: #070710;
+      border: 1px solid rgba(167,139,250,0.2);
+      border-left: 3px solid var(--accent2);
+      border-radius: 0 12px 12px 0;
+      padding: 16px 20px;
+      margin-top: 16px;
+      font-size: 0.92rem;
+      color: #ccc;
+      white-space: pre-wrap;
+    }
+
+    .prompt-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent2);
+      margin-bottom: 8px;
+    }
+
+    /* CHECKLIST */
+    .checklist {
+      list-style: none;
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .checklist li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.95rem;
+      color: #ccc;
+    }
+
+    .checklist li::before {
+      content: '✓';
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* DIVIDER */
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border-dim), transparent);
+      margin: 0 0 80px;
+    }
+
+    /* FINAL CTA */
+    .final-cta {
+      text-align: center;
+      padding: 80px 24px 100px;
+      background: radial-gradient(ellipse at 50% 100%, #0a1f1a 0%, #0d0d0d 70%);
+    }
+
+    .final-cta h2 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .final-cta p {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 460px;
+      margin: 0 auto 32px;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 14px 32px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .cta-btn:hover { opacity: 0.88; transform: translateY(-2px); }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.8rem;
+      color: #333;
+    }
+
+    @media (max-width: 700px) {
+      .hero { padding: 80px 24px 60px; justify-content: center; }
+      .hero-bg { width: 100%; opacity: 0.15; -webkit-mask-image: none; mask-image: none; }
+      .topbar { padding: 12px 20px; }
+      .content { padding: 48px 20px; }
+      .step-card { padding: 22px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <nav class="topbar">
+    <a href="assistant.html" class="topbar-logo">← ИИ-ассистент</a>
+    <div class="topbar-progress">
+      <div class="progress-dot done"></div>
+      <div class="progress-dot done"></div>
+      <div class="progress-dot done"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <img src="hero.jpg" alt="" class="hero-bg" />
+    <div class="hero-text">
+      <div class="hero-badge">Платный гайд · куплен</div>
+      <h1>Твой <span>ИИ-ассистент</span><br/>за 4 шага</h1>
+      <p>Установим VS Code, подключим Claude и создадим первый проект — прямо сейчас.</p>
+    </div>
+  </section>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ГЛАВА 1 -->
+    <div class="chapter">
+      <div class="chapter-label">Шаг 1</div>
+      <h2>Устанавливаем VS Code</h2>
+      <p>VS Code — бесплатный редактор кода от Microsoft. Именно в нём будет жить твой ИИ-ассистент. Скачиваем и устанавливаем.</p>
+
+      <div class="step-card">
+        <div class="step-num-badge">1</div>
+        <h3>Скачай VS Code</h3>
+        <p>Перейди на официальный сайт и скачай версию для своей системы. Нажми большую синюю кнопку — она автоматически определит твою ОС.</p>
+        <a href="https://code.visualstudio.com" target="_blank" class="dl-btn">↗ Скачать VS Code</a>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num-badge">2</div>
+        <h3>Установи как обычную программу</h3>
+        <p>Открой скачанный файл и следуй инструкциям. На Windows — нажимай «Далее». На Mac — перетащи иконку в папку Applications.</p>
+        <div class="tip-box">
+          <div class="tip-icon">💡</div>
+          <p><strong>На Windows:</strong> поставь галочку «Добавить в PATH» — это пригодится позже.</p>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num-badge">3</div>
+        <h3>Открой VS Code и создай рабочую папку</h3>
+        <p>Запусти VS Code. Нажми <strong style="color:var(--accent)">File → Open Folder</strong> и выбери или создай папку для своих проектов. Например: <code style="color:var(--accent);background:rgba(52,211,153,0.08);padding:2px 6px;border-radius:4px">Documents/мои-проекты</code></p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ГЛАВА 2 -->
+    <div class="chapter">
+      <div class="chapter-label">Шаг 2</div>
+      <h2>Подключаем Claude</h2>
+      <p>Claude Code — это официальное расширение Anthropic для VS Code. После установки Claude будет видеть все твои файлы и работать прямо в редакторе.</p>
+
+      <div class="step-card">
+        <div class="step-num-badge">1</div>
+        <h3>Установи расширение Claude Code</h3>
+        <p>В VS Code слева нажми иконку Extensions (квадраты), в поиске введи <strong style="color:var(--accent)">Claude</strong>, найди расширение от Anthropic и нажми <strong>Install</strong>.</p>
+        <div class="tip-box">
+          <div class="tip-icon">✦</div>
+          <p>Ищи именно <strong>«Claude» от Anthropic</strong> — официальный значок с белым ромбом на чёрном фоне.</p>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num-badge">2</div>
+        <h3>Войди в аккаунт Anthropic</h3>
+        <p>После установки расширение попросит авторизоваться. Нажми <strong style="color:var(--accent)">Sign in</strong> — откроется браузер, войди в свой аккаунт claude.ai или создай новый.</p>
+        <div class="warn-box">
+          <div class="tip-icon">⚠️</div>
+          <p><strong>Нужен Pro план ($20/мес) или API-ключ.</strong> Бесплатного аккаунта для работы в VS Code недостаточно. Самый простой вариант — Pro план.</p>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num-badge">3</div>
+        <h3>Проверь что всё работает</h3>
+        <p>После входа в левой панели VS Code появится иконка Claude. Нажми на неё — откроется чат. Напиши «Привет» — если ответил, всё готово.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ГЛАВА 3 -->
+    <div class="chapter">
+      <div class="chapter-label">Шаг 3</div>
+      <h2>Первый проект с нуля</h2>
+      <p>Теперь самое интересное — создаём реальный проект. Claude видит твою папку и может создавать файлы, писать код и исправлять ошибки.</p>
+
+      <div class="step-card">
+        <div class="step-num-badge">1</div>
+        <h3>Открой чат Claude в VS Code</h3>
+        <p>Нажми на иконку Claude в левой панели. Убедись, что у тебя открыта рабочая папка — тогда Claude будет видеть все файлы в ней.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num-badge">2</div>
+        <h3>Дай первое задание</h3>
+        <p>Опиши что хочешь создать. Чем подробнее — тем лучше. Вот пример хорошего запроса:</p>
+        <div class="prompt-label">Пример запроса</div>
+        <div class="prompt-example">Создай лендинг для фотографа.
+Структура: Hero с именем и кнопкой, галерея 6 фото (используй placeholder-изображения), блок «Обо мне», форма контакта.
+Стиль: тёмный фон, белый текст, золотые акценты.
+Сохрани всё в один файл index.html с CSS внутри.</div>
+        <div class="tip-box">
+          <div class="tip-icon">💡</div>
+          <p><strong>Главное правило:</strong> всегда проси сохранить в конкретный файл. Тогда Claude создаст файл прямо в твоей папке.</p>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num-badge">3</div>
+        <h3>Claude создаёт файлы — ты проверяешь</h3>
+        <p>Claude попросит разрешение создать файл — нажми <strong style="color:var(--accent)">Accept</strong>. Файл появится в твоей папке. Открой его двойным кликом в браузере.</p>
+        <div class="tip-box">
+          <div class="tip-icon">🔁</div>
+          <p>Что-то не нравится? Просто напиши что изменить — не редактируй код вручную. Правь через запросы.</p>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <h2>Теперь ты готов</h2>
+    <p>У тебя есть все инструменты. Открой VS Code, создай папку и опиши свой первый проект.</p>
+    <a href="index.html" class="cta-btn">← Вернуться к бесплатному гайду</a>
+  </section>
+
+  <footer>Гайд сделан с помощью Claude · 2025</footer>
+
+</body>
+</html>
